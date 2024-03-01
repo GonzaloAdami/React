@@ -33,7 +33,7 @@ export function Menu() {
   useEffect(() => {
     // Save data to local storage when arrayCards changes
     localStorage.setItem('cards', JSON.stringify(arrayCards));
-    console.log('cards', JSON.stringify(arrayCards))
+   
   }, [arrayCards]);
 
   function cambiarFoto(file: ChangeEvent<HTMLInputElement>) {
@@ -43,22 +43,27 @@ export function Menu() {
   }
 
   function render(event: ChangeEvent<HTMLInputElement>) {
-    console.log("File input changed:", event.target.files);
+    
   
     const input = event.target;
     const files = input.files;
   
     if (files && files.length > 0) {
       const file = files[0];
+      const reader = new FileReader();
   
-      // Assuming you want to set backgroundImage in formData
-      const imageUrl = URL.createObjectURL(file);
-      console.log("Generated Image URL:", imageUrl);
+      reader.onload = (e) => {
+        const base64String = e.target?.result as string;
+       
   
-      setFormData({
-        ...formData,
-        backgroundImage: imageUrl,
-      });
+        setFormData({
+          ...formData,
+          backgroundImage: base64String,
+        });
+      };
+  
+      // Read the file as base64
+      reader.readAsDataURL(file);
     }
   }
   
@@ -119,8 +124,10 @@ export function Menu() {
             <button onClick={handleSubmit} className='button'>Publicar</button>
           </li>
         </ul>
+      
       </nav>
       <App cards={arrayCards} />
+      
     </section>
   );
 }
